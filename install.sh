@@ -193,7 +193,7 @@ echo "${tty_green}==>配置${my_config}${tty_reset}"
 if [ ! -L ${my_config} ]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/vim/vimrc ${my_config}"
 else
-  /bin/bash -c "ln -s -f ${SETTING_PATH}/zsh/zshrc ${my_config}"
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/vim/vimrc ${my_config}"
 fi
 
 # ssh config
