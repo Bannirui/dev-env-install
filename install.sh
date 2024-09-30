@@ -30,36 +30,6 @@ tty_bold="$(tty_universal 39)"         #加黑
 tty_cyan="$(tty_universal 36)"         #青色
 tty_reset="$(tty_escape 0)"            #去除颜色
 
-#判断是否执行成功
-JudgeSuccess()
-{
-    if [ $? -ne 0 ];then
-        echo "${tty_red}此步骤失败 '$1'${tty_reset}"
-        if [[ "$2" == 'out' ]]; then
-          exit 0
-        fi
-    else
-        echo "${tty_green}此步骤成功${tty_reset}"
-    fi
-}
-
-#一些警告判断
-warning_if() {
-  git_https_proxy=$(git config --global https.proxy)
-  git_http_proxy=$(git config --global http.proxy)
-  if [[ -z "$git_https_proxy" && -z "$git_http_proxy" ]]; then
-    echo "未发现Git代理（属于正常状态）"
-  else
-    echo "${tty_yellow}
-      提示：发现你电脑设置了Git代理，如果Git报错，请运行下面两句话：
-
-              git config --global --unset https.proxy
-
-              git config --global --unset http.proxy${tty_reset}
-  "
-  fi
-}
-
 # 开始执行环境配置
 echo "
               ${tty_green}开始执行脚本配置开发环境${tty_reset}
