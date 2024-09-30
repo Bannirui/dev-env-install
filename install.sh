@@ -146,3 +146,70 @@ if [ $? -ne 0 ]; then
     sudo apt install npm
   fi
 fi
+
+# 配置文件
+SETTING_GIT_REPO="dev-env-setting"
+SETTING_PATH=${USER_HOME_PREFIX}/${USER_NAME}/MyDev/env/${SETTING_GIT_REPO}
+if [ ! -d ${SETTING_PATH} ]; then
+  echo "${tty_green}==>配置文件为${SETTING_PATH}${tty_reset}"
+  /bin/bash -c "git clone git@github.com:Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
+fi
+
+# zshrc
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.zshrc"
+echo "${tty_green}==>配置${my_config}{tty_reset}"
+if [ ! -L ${my_config} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/zsh/zshrc ${my_config}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/zsh/zshrc ${my_config}"
+fi
+
+# vscode
+if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+  # Mac
+  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/settings.json"
+  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/keybindings.json"
+else
+  # Linux
+  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/settings.json"
+  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/keybindings.json"
+fi
+echo "${tty_green}==>配置${my_vscode_setting_path}${tty_reset}"
+echo "${tty_green}==>配置${my_vscode_keybind_path}${tty_reset}"
+if [ ! -L ${my_vscode_setting_path} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/settings.json ${my_vscode_setting_path}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/vscode/setting/settings.json ${my_vscode_setting_path}"
+fi
+if [ ! -L ${my_vscode_keybind_path} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/keybindings.json ${my_vscode_keybind_path}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/vscode/setting/keybindings.json ${my_vscode_keybind_path}"
+fi
+
+# vimrc
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.vimrc"
+echo "${tty_green}==>配置${my_config}${tty_reset}"
+if [ ! -L ${my_config} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vim/vimrc ${my_config}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/zsh/zshrc ${my_config}"
+fi
+
+# ssh config
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/config"
+echo "${tty_green}==>配置${my_config}${tty_reset}"
+if [ ! -L ${my_config} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/ssh/config ${my_config}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/ssh/config ${my_config}"
+fi
+
+# maven config
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.m2/settings.xml"
+echo "${tty_green}==>配置${my_config}${tty_reset}"
+if [ ! -L ${my_config} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/maven/maven_settings.xml ${my_config}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/maven/maven_settings.xml ${my_config}"
+fi
