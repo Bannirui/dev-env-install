@@ -1,5 +1,9 @@
+#! /bin/bash
+#set -evx
+
 TIME=$(date "+%Y-%m-%d %H:%M:%S")
 OS="$(uname)"
+echo ${OS}
 if [[ "${OS}" == "Linux" ]]; then
   INSTALL_ON_LINUX=1
   USER_HOME_PREFIX="/home"
@@ -111,7 +115,7 @@ done
 # maven
 mvn --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少maven 开始安装{tty_reset}"
+  echo "${tty_red}缺少maven 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
     brew install maven
@@ -150,8 +154,9 @@ fi
 # 配置文件
 SETTING_GIT_REPO="dev-env-setting"
 SETTING_PATH=${USER_HOME_PREFIX}/${USER_NAME}/MyDev/env/${SETTING_GIT_REPO}
+echo "${tty_green}==>配置文件为${SETTING_PATH}${tty_reset}"
 if [ ! -d ${SETTING_PATH} ]; then
-  echo "${tty_green}==>配置文件为${SETTING_PATH}${tty_reset}"
+  echo "${tty_green}配置文件不存在 开始clone远程"
   /bin/bash -c "git clone https://github.com/Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
 fi
 
@@ -212,4 +217,13 @@ if [ ! -L ${my_config} ]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/maven/maven_settings.xml ${my_config}"
 else
   /bin/bash -c "ln -s -f ${SETTING_PATH}/maven/maven_settings.xml ${my_config}"
+fi
+
+# idea vimrc
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ideavimrc"
+echo "${tty_green}==>配置${my_config}${tty_reset}"
+if [ ! -L ${my_config} ]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/ide/ideavimrc ${my_config}"
+else
+  /bin/bash -c "ln -s -f ${SETTING_PATH}/ide/ideavimrc ${my_config}"
 fi
