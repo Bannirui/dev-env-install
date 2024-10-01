@@ -172,8 +172,8 @@ fi
 # vscode
 if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   # Mac
-  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/settings.json"
-  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/keybindings.json"
+  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application \Support/Code/User/settings.json"
+  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application \Support/Code/User/keybindings.json"
 else
   # Linux
   my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/settings.json"
