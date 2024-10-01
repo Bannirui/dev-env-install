@@ -152,7 +152,7 @@ SETTING_GIT_REPO="dev-env-setting"
 SETTING_PATH=${USER_HOME_PREFIX}/${USER_NAME}/MyDev/env/${SETTING_GIT_REPO}
 if [ ! -d ${SETTING_PATH} ]; then
   echo "${tty_green}==>配置文件为${SETTING_PATH}${tty_reset}"
-  /bin/bash -c "git clone git@github.com:Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
+  /bin/bash -c "git clone https://github.com/Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
 fi
 
 # zshrc
