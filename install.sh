@@ -172,8 +172,8 @@ fi
 # vscode
 if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   # Mac
-  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application \Support/Code/User/settings.json"
-  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application \Support/Code/User/keybindings.json"
+  my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/settings.json"
+  my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/keybindings.json"
 else
   # Linux
   my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/settings.json"
@@ -181,15 +181,15 @@ else
 fi
 echo "${tty_green}==>配置${my_vscode_setting_path}${tty_reset}"
 echo "${tty_green}==>配置${my_vscode_keybind_path}${tty_reset}"
-if [ ! -L ${my_vscode_setting_path} ]; then
-  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/settings.json ${my_vscode_setting_path}"
+if [[ ! -L ${my_vscode_setting_path} ]]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/settings.json '${my_vscode_setting_path}'"
 else
-  /bin/bash -c "ln -s -f ${SETTING_PATH}/vscode/setting/settings.json ${my_vscode_setting_path}"
+  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/setting/settings.json '${my_vscode_setting_path}'"
 fi
-if [ ! -L ${my_vscode_keybind_path} ]; then
-  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/keybindings.json ${my_vscode_keybind_path}"
+if [[ ! -L ${my_vscode_keybind_path} ]]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
 else
-  /bin/bash -c "ln -s -f ${SETTING_PATH}/vscode/setting/keybindings.json ${my_vscode_keybind_path}"
+  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
 fi
 
 # vimrc
