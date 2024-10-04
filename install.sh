@@ -142,14 +142,7 @@ done
 # maven
 mvn --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少maven 开始安装${tty_reset}"
-  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
-    # Macos
-    brew install maven
-  else
-    # Linux
-    sudo apt install maven
-  fi
+  echo "${tty_red}缺少maven 因为maven的安装可能依赖JAVA_HOME 而jdk的版本需求可能各不相同 因此请手动安装maven${tty_reset}"
 fi
 
 # node
