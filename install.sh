@@ -131,6 +131,20 @@ if [ $? -ne 0 ]; then
   echo "${tty_red}缺少zsh 开始安装${tty_reset}"
   /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
+
+# neofetch
+neofetch --version
+if [ $? -ne 0 ]; then
+  echo "${tty_red}缺少neofetch 开始安装${tty_reset}"
+  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+    # Mac
+    brew install neofetch
+  else
+    # Linux
+    sudo apt install neofetch
+  fi
+fi
+
 # zsh插件
 # 按照插件名称安装指定插件 入参为插件名称
 install_zsh_plugin() {
