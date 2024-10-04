@@ -51,16 +51,6 @@ if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   fi
 fi
 
-# 终端
-if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
-  # Mac
-  iterm2 --version
-  if [ $? -ne 0 ]; then
-    echo "${tty_red}==>缺少iterm2 开始安装${tty_reset}"
-    /bin/bash -c "brew install iterm2"
-  fi
-fi
-
 # git
 git --version
 if [ $? -ne 0 ]; then
@@ -111,10 +101,12 @@ for ((i=0;i<${#GIT_SSH_NAMES[@]};i++));
 
 # 临时ssh config 下面要用github ssh协议clone项目
 my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/config"
-if [[ ! -f ${my_config} ]]; then
-  /bib/bash -c "touch ${my_config}"
-fi
-str="
+if [[ ! -L ${my_config} ]]; then
+  /bin/bash -c "touch ${my_config}"
+  if [[ ! -f ${my_config} ]]; then
+    /bin/bash -c "touch ${my_config}"
+  fi
+  str="
     Host github.com
 	  HostName ssh.github.com
     Port 443
@@ -122,8 +114,9 @@ str="
 	  User Bannirui@outlook.com
     PreferredAuthentications publickey
     ProxyCommand corkscrew 127.0.0.1 7890 %h %p
-"
-echo ${str} > ${my_config}
+  "
+  echo ${str} > ${my_config}
+fi
 
 # zsh
 zsh --version
@@ -175,7 +168,8 @@ if [ $? -ne 0 ]; then
   echo "${tty_red}缺少node 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
-    brew install node
+    echo "${tty_red}系统版本<=11时 brew安装不了node高版本 需要手动处理${tty_reset}"
+    #brew install node
   else
     # Linux
     sudo apt install nodejs
@@ -188,7 +182,8 @@ if [ $? -ne 0 ]; then
   echo "${tty_red}缺少npm 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
-    brew install npm
+    echo "${tty_red}系统版本<=11时 brew安装不了node高版本 需要手动处理${tty_reset}"
+    #brew install npm
   else
     # Linux
     sudo apt install npm
@@ -205,6 +200,20 @@ if [ $? -ne 0 ]; then
   else
     # Linux
     sudo apt install visual-studio-code
+  fi
+fi
+
+# arm-none-eabi
+arm-none-eabi-gcc --version
+if [ $? -ne 0 ]; then
+  echo "${tty_red}==>缺少arm-none-eabi-gcc 开始安装 如果需要指定版本就手动再重新安装${tty_reset}"
+  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+    # Mac
+    echo "${tty_red}系统版本<=11时 brew安装不了node高版本 需要手动处理${tty_reset}"
+    #brew install arm-none-eabi-gcc
+  else
+    # Linux
+    sudo apt install arm-none-eabi-gcc
   fi
 fi
 
