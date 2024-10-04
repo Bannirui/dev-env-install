@@ -181,6 +181,19 @@ if [ $? -ne 0 ]; then
   fi
 fi
 
+# vscode
+code --version
+if [ $? -ne 0 ]; then
+  echo "${tty_red}==>缺少vscode 开始安装${tty_reset}"
+  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+    # Mac
+    brew install visual-studio-code
+  else
+    # Linux
+    sudo apt install visual-studio-code
+  fi
+fi
+
 # 配置文件
 SETTING_GIT_REPO="dev-env-setting"
 SETTING_PATH=${USER_HOME_PREFIX}/${USER_NAME}/MyDev/env/${SETTING_GIT_REPO}
