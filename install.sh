@@ -51,6 +51,16 @@ if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   fi
 fi
 
+# 终端
+if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+  # Mac
+  iterm2 --version
+  if [ $? -ne 0 ]; then
+    echo "${tty_red}==>缺少iterm2 开始安装${tty_reset}"
+    /bin/bash -c "brew install iterm2"
+  fi
+fi
+
 # git
 git --version
 if [ $? -ne 0 ]; then
