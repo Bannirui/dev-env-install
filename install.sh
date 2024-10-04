@@ -64,6 +64,17 @@ if [ $? -ne 0 ]; then
   fi
 fi
 
+# 代理软件
+corkscrew --version
+if [ $? -ne 0 ]; then
+  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+    echo "${tty_red}==>缺少corkscrew 开始安装${tty_reset}"
+    brew install corkscrew
+  else
+    echo "${tty_red}==>缺少corkscrew 开始安装${tty_reset}"
+    sudo apt install corkscrew
+  fi
+fi
 # ssh密钥
 GIT_SSH_NAMES=("my_github" "tongcheng_gitlab")
 GIT_SSH_EMAILS=("Bannirui@outlook.com" "rui3.ding@ly.com")
@@ -88,10 +99,26 @@ for ((i=0;i<${#GIT_SSH_NAMES[@]};i++));
 /bin/bash -c "$(git config --global user.name "dingrui")"
 /bin/bash -c "$(git config --global user.email "Bannirui@outlook.com")"
 
+# 临时ssh config 下面要用github ssh协议clone项目
+my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/config"
+if [[ ! -f ${my_config} ]]; then
+  /bib/bash -c "touch ${my_config}"
+fi
+str="
+    Host github.com
+	  HostName ssh.github.com
+    Port 443
+	  IdentityFile ~/.ssh/my_github
+	  User Bannirui@outlook.com
+    PreferredAuthentications publickey
+    ProxyCommand corkscrew 127.0.0.1 7890 %h %p
+"
+echo ${str} > ${my_config}
+
 # zsh
 zsh --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少zsh 开始安装{tty_reset}"
+  echo "${tty_red}缺少zsh 开始安装${tty_reset}"
   /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 # zsh插件
@@ -128,7 +155,7 @@ fi
 # node
 node --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少node 开始安装{tty_reset}"
+  echo "${tty_red}缺少node 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
     brew install node
@@ -141,7 +168,7 @@ fi
 # npm
 npm --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少npm 开始安装{tty_reset}"
+  echo "${tty_red}缺少npm 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
     brew install npm
@@ -157,12 +184,13 @@ SETTING_PATH=${USER_HOME_PREFIX}/${USER_NAME}/MyDev/env/${SETTING_GIT_REPO}
 echo "${tty_green}==>配置文件为${SETTING_PATH}${tty_reset}"
 if [ ! -d ${SETTING_PATH} ]; then
   echo "${tty_green}配置文件不存在 开始clone远程"
-  /bin/bash -c "git clone https://github.com/Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
+  # 私仓
+  /bin/bash -c "git clone git@github.com:Bannirui/${SETTING_GIT_REPO}.git ${SETTING_PATH}"
 fi
 
 # zshrc
 my_config="${USER_HOME_PREFIX}/${USER_NAME}/.zshrc"
-echo "${tty_green}==>配置${my_config}{tty_reset}"
+echo "${tty_green}==>配置${my_config}${tty_reset}"
 if [ ! -L ${my_config} ]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/zsh/zshrc ${my_config}"
 else
@@ -201,9 +229,12 @@ else
   /bin/bash -c "ln -s -f ${SETTING_PATH}/vim/vimrc ${my_config}"
 fi
 
-# ssh config
+# ssh config 上面为了临时使用git的ssh创建过了一个文件
 my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/config"
 echo "${tty_green}==>配置${my_config}${tty_reset}"
+if [[ -f ${my_config} ]]; then
+  /bin/bash -c "rm -f ${my_config}"
+fi
 if [ ! -L ${my_config} ]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/ssh/config ${my_config}"
 else
