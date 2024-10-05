@@ -121,7 +121,19 @@ fi
 # zsh
 zsh --version
 if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少zsh 开始安装${tty_reset}"
+  echo "${tty_red}==>缺少zsh 开始安装${tty_reset}"
+  if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+    # Mac
+    brew install zsh
+  else
+    # Linux
+    sudo apt install zsh
+  fi
+fi
+# omz
+omz version
+if [ $? -ne 0 ]; then
+  echo "${tty_red}==>缺少omz 开始安装${tty_reset}"
   /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
