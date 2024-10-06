@@ -65,16 +65,15 @@ if [ $? -ne 0 ]; then
 fi
 
 # 代理软件
-corkscrew --version
-if [ $? -ne 0 ]; then
+if ! type corkscrew > /dev/null 2>&1; then
+  echo "${tty_red}==>缺少corkscrew 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
-    echo "${tty_red}==>缺少corkscrew 开始安装${tty_reset}"
     brew install corkscrew
   else
-    echo "${tty_red}==>缺少corkscrew 开始安装${tty_reset}"
     sudo apt install corkscrew
   fi
 fi
+
 # ssh密钥
 GIT_SSH_NAMES=("my_github" "tongcheng_gitlab")
 GIT_SSH_EMAILS=("Bannirui@outlook.com" "rui3.ding@ly.com")
@@ -125,21 +124,19 @@ if [ $? -ne 0 ]; then
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Mac
     brew install zsh
+    # omz
+    echo "${tty_red}==>缺少omz 开始安装${tty_reset}"
+    /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   else
     # Linux
     sudo apt install zsh
   fi
 fi
-# omz
-omz version
-if [ $? -ne 0 ]; then
-  echo "${tty_red}==>缺少omz 开始安装${tty_reset}"
-  /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
 
 # neofetch
-neofetch --version
-if [ $? -ne 0 ]; then
+if command -v neofetch >/dev/null 2>&1 ; then
+  echo "${tty_cyan}neofetch已经安装过了${tty_reset}"
+else
   echo "${tty_red}缺少neofetch 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Mac
