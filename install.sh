@@ -41,6 +41,12 @@ echo "
               当前系统类型为${OS}
               ${TIME}
 "
+
+# mac版本
+if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+  ver_cmp=11
+  ver_cur=$(sw_vers -productVersion 2>/dev/null | awk '{print int($0)}')
+fi
 # 包管理器
 if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   # Mac
@@ -172,13 +178,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # node
-node --version
-if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少node 开始安装${tty_reset}"
+if command -v node >/dev/null 2>&1 ; then
+  echo "${tty_cyan}==>node已经安装过了${tty_reset}"
+else
+  echo "${tty_red}==>缺少node 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
-    echo "${tty_red}系统版本<=11时 brew安装不了node高版本 需要手动处理${tty_reset}"
-    #brew install node
+    if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+      echo "${tty_red}==>系统版本为${ver_cur} 当前版本太低 brew安装不了node 需要手动安装${tty_reset}"
+    else
+      brew install node
+    fi
   else
     # Linux
     sudo apt install nodejs
@@ -186,13 +196,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # npm
-npm --version
-if [ $? -ne 0 ]; then
-  echo "${tty_red}缺少npm 开始安装${tty_reset}"
+if command -v npm >/dev/null 2>&1 ; then
+  echo "${tty_cyan}==>npm已经安装过了${tty_reset}"
+else
+  echo "${tty_red}==>缺少npm 开始安装${tty_reset}"
   if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
     # Macos
-    echo "${tty_red}系统版本<=11时 brew安装不了node高版本 需要手动处理${tty_reset}"
-    #brew install npm
+    if [ $ver_cur -le $ver_cmp ]; then
+      echo "${tty_red}==>系统版本为${ver_cur} 当前版本太低 brew安装不了npm 需要手动安装${tty_reset}"
+    else
+      brew install npm
+    fi
   else
     # Linux
     sudo apt install npm
@@ -255,12 +269,25 @@ else
   my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/settings.json"
   my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/keybindings.json"
 fi
+
+if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
+  # Mac
+  if [ $ver_cur -le $ver_cmp ]; then
+    my_vscode_setting_src="${SETTING_PATH}/vscode/setting/settings_hackintosh.json"
+  else
+    my_vscode_setting_src="${SETTING_PATH}/vscode/setting/settings_mac.json"
+  fi
+else
+  # Linux
+  my_vscode_setting_src="${SETTING_PATH}/vscode/setting/settings_linux.json"
+fi
+
 echo "${tty_green}==>配置${my_vscode_setting_path}${tty_reset}"
 echo "${tty_green}==>配置${my_vscode_keybind_path}${tty_reset}"
 if [[ ! -L ${my_vscode_setting_path} ]]; then
-  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/settings.json '${my_vscode_setting_path}'"
+  /bin/bash -c "ln -s ${my_vscode_setting_src} '${my_vscode_setting_path}'"
 else
-  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/setting/settings.json '${my_vscode_setting_path}'"
+  /bin/bash -c "ln -sf ${my_vscode_setting_src} '${my_vscode_setting_path}'"
 fi
 if [[ ! -L ${my_vscode_keybind_path} ]]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
