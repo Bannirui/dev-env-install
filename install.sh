@@ -82,27 +82,64 @@ fi
 
 # ssh密钥
 GIT_SSH_NAMES=("my_github" "tongcheng_gitlab")
+PC_SSH_NAMES=("debian" "hackintosh")
 GIT_SSH_EMAILS=("Bannirui@outlook.com" "rui3.ding@ly.com")
 # 处理单个git ssh 入参1个 是GIT_SSH_NAMES的脚标
-process() {
+function process_git_ssh() {
   file_name="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/${GIT_SSH_NAMES[${1}]}"
-  if [ ! -f ${file_name} ]; then
+  if [ ! -f "${file_name}" ]; then
     echo "${tty_green}生成密钥路径为${file_name}"
-    /bin/bash -c "ssh-keygen -t rsa -C ${GIT_SSH_EMAILS[${1}]} -f ${file_name} -P "" -N "" -q"
+    /usr/bin/expect<<-EOF
+    set timeout 60
+    # 开启进程会话
+    spawn ssh-keygen -t rsa -C ${GIT_SSH_EMAILS[${1}]} -n '' -f ${file_name}
+    expect {
+      "Enter file in which to save the key (/root/.ssh/id_rsa):" { send "\r"; exp_continue }
+      "Overwrite (y/n)?" { send "n\r" }
+      "Enter passphrase (empty for no passphrase):" { send "\r"; exp_continue }
+      "Enter same passphrase again:" { send "\r" }
+    }
+    # 结束进程会话
+    expect eof
+# 这个地方EOF一定要顶格写
+EOF
     /bin/bash -c "ssh-add ${GIT_SSH_NAMES[${1}]}"
+  fi
+}
+function process_pc_ssh() {
+  file_name="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/${PC_SSH_NAMES[${1}]}"
+  if [ ! -f "${file_name}" ]; then
+    echo "${tty_green}生成密钥路径为${file_name}"
+    /usr/bin/expect<<-EOF
+    set timeout 60
+    # 开启进程会话
+    spawn ssh-keygen -t rsa -n '' -f ${file_name}
+    expect {
+      "Enter file in which to save the key (/root/.ssh/id_rsa):" { send "\r"; exp_continue }
+      "Overwrite (y/n)?" { send "n\r" }
+      "Enter passphrase (empty for no passphrase):" { send "\r"; exp_continue }
+      "Enter same passphrase again:" { send "\r" }
+    }
+    # 结束进程会话
+    expect eof
+# 这个地方EOF一定要顶格写
+EOF
   fi
 }
 
 /bin/bash -c "$(git config --global --unset user.name)"
 /bin/bash -c "$(git config --global --unset user.email)"
-
 for ((i=0;i<${#GIT_SSH_NAMES[@]};i++));
-  do
-    process ${i};
-  done
-
+do
+  process_git_ssh ${i};
+done
 /bin/bash -c "$(git config --global user.name "dingrui")"
 /bin/bash -c "$(git config --global user.email "Bannirui@outlook.com")"
+
+for ((i=0;i<${#PC_SSH_NAMES[@]};i++));
+do
+  process_pc_ssh ${i};
+done
 
 # 临时ssh config 下面要用github ssh协议clone项目
 my_config="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/config"
