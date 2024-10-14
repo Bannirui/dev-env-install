@@ -296,7 +296,7 @@ else
   /bin/bash -c "ln -s -f ${SETTING_PATH}/zsh/zshrc ${my_config}"
 fi
 
-# vscode
+# vscode配置
 if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   # Mac
   my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/Library/Application Support/Code/User/settings.json"
@@ -306,7 +306,7 @@ else
   my_vscode_setting_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/settings.json"
   my_vscode_keybind_path="${USER_HOME_PREFIX}/${USER_NAME}/.config/Code/User/keybindings.json"
 fi
-
+# vscode热键
 if [[ -z "${INSTALL_ON_LINUX-}" ]]; then
   # Mac
   if [ $ver_cur -le $ver_cmp ]; then
@@ -318,9 +318,11 @@ else
   # Linux
   my_vscode_setting_src="${SETTING_PATH}/vscode/setting/settings_linux.json"
 fi
+dest_clang_format_path="${USER_HOME_PREFIX}/${USER_NAME}/.clang-format"
 
 echo "${tty_green}==>配置${my_vscode_setting_path}${tty_reset}"
 echo "${tty_green}==>配置${my_vscode_keybind_path}${tty_reset}"
+echo "${tty_green}==>配置${dest_clang_format_path}${tty_reset}"
 if [[ ! -L ${my_vscode_setting_path} ]]; then
   /bin/bash -c "ln -s ${my_vscode_setting_src} '${my_vscode_setting_path}'"
 else
@@ -330,6 +332,11 @@ if [[ ! -L ${my_vscode_keybind_path} ]]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
 else
   /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
+fi
+if [[ ! -L ${dest_clang_format_path} ]]; then
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/lang/clang_format ${dest_clang_format_path}"
+else
+  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/lang/clang_format ${dest_clang_format_path}"
 fi
 
 # vimrc
