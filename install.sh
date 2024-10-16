@@ -333,10 +333,11 @@ if [[ ! -L ${my_vscode_keybind_path} ]]; then
 else
   /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/setting/keybindings.json '${my_vscode_keybind_path}'"
 fi
+# vscode插件c++配置clangd格式化
 if [[ ! -L ${dest_clang_format_path} ]]; then
-  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/lang/clang_format ${dest_clang_format_path}"
+  /bin/bash -c "ln -s ${SETTING_PATH}/vscode/lang/clang-format ${dest_clang_format_path}"
 else
-  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/lang/clang_format ${dest_clang_format_path}"
+  /bin/bash -c "ln -sf ${SETTING_PATH}/vscode/lang/clang-format ${dest_clang_format_path}"
 fi
 
 # vimrc
