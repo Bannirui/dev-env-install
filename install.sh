@@ -80,13 +80,22 @@ if ! type corkscrew > /dev/null 2>&1; then
   fi
 fi
 
+# .ssh路径
+SSH_DIR="${USER_HOME_PREFIX}/${USER_NAME}/.ssh"
+if [ ! -d "${SSH_DIR}" ];then
+    mkdir -p $SSH_DIR
+    echo "${tty_green}创建路径${SSH_DIR}成功"
+else
+    echo "${tty_green}路径${SSH_DIR}已经存在"
+fi
+
 # ssh密钥
 GIT_SSH_NAMES=("my_github" "tongcheng_gitlab")
-PC_SSH_NAMES=("debian" "hackintosh")
+PC_SSH_NAMES=("debian" "hackintosh" "WinUbuntu")
 GIT_SSH_EMAILS=("Bannirui@outlook.com" "rui3.ding@ly.com")
 # 处理单个git ssh 入参1个 是GIT_SSH_NAMES的脚标
 function process_git_ssh() {
-  file_name="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/${GIT_SSH_NAMES[${1}]}"
+  file_name="${SSH_DIR}/${GIT_SSH_NAMES[${1}]}"
   if [ ! -f "${file_name}" ]; then
     echo "${tty_green}生成密钥路径为${file_name}"
     /usr/bin/expect<<-EOF
@@ -106,6 +115,7 @@ EOF
     /bin/bash -c "ssh-add ${GIT_SSH_NAMES[${1}]}"
   fi
 }
+# 密钥文件用pc名称标识
 function process_pc_ssh() {
   file_name="${USER_HOME_PREFIX}/${USER_NAME}/.ssh/${PC_SSH_NAMES[${1}]}"
   if [ ! -f "${file_name}" ]; then
@@ -129,6 +139,7 @@ EOF
 
 /bin/bash -c "$(git config --global --unset user.name)"
 /bin/bash -c "$(git config --global --unset user.email)"
+# 不同pc终端都生成各自的密钥
 for ((i=0;i<${#GIT_SSH_NAMES[@]};i++));
 do
   process_git_ssh ${i};
