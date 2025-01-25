@@ -373,7 +373,15 @@ else
 fi
 
 # maven config
-my_config="${USER_HOME_PREFIX}/${USER_NAME}/.m2/settings.xml"
+# .m2 dir
+m2_dir="${USER_HOME_PREFIX}/${USER_NAME}/.m2"
+if [ ! -d "${m2_dir}" ];then
+    mkdir -p $m2_dir
+    echo "${tty_green}创建路径${m2_dir}成功"
+else
+    echo "${tty_green}路径${m2_dir}已经存在"
+fi
+my_config="${m2_dir}/settings.xml"
 echo "${tty_green}==>配置${my_config}${tty_reset}"
 if [ ! -L ${my_config} ]; then
   /bin/bash -c "ln -s ${SETTING_PATH}/maven/maven_settings.xml ${my_config}"
